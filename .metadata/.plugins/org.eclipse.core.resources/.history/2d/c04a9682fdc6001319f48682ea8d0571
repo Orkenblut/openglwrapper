@@ -1,0 +1,5 @@
+package com.freja.openglwrapper.renderer;
+
+public class FragmentShader {
+
+}

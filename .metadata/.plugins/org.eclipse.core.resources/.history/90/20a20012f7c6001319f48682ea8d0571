@@ -1,0 +1,51 @@
+/**
+ * 
+ */
+package com.freja.openglwrapper;
+
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
+import android.content.res.Resources;
+import android.util.Log;
+
+/**
+ * @author Orkenblut
+ *
+ */
+public class Utility {
+	/**
+	 * Read File To String
+	 * @param fileName Input file name
+	 * @return Complete File as String
+	 */
+	public static String ReadFile(String fileName) {		
+		BufferedInputStream is = null;
+		try {
+			String result = "";
+			//is = new BufferedInputStream(new FileInputStream(fileName));
+			is = new BufferedInputStream( Class.class.getClassLoader().getResourceAsStream(fileName));
+			int c;
+			while((c = is.read()) != -1) {
+				result += c;
+			}
+			return result;
+		} catch(FileNotFoundException fnfEx) {
+			Log.e("Exception", fnfEx.toString());
+		} catch(IOException ioEx) {
+			Log.e("Exception", ioEx.toString());
+		} finally {
+			if(is != null) {
+				try {
+					is.close();
+				} catch(IOException ioEx) {
+					Log.e("Exception", ioEx.toString());
+				}
+			}
+		}
+		return null;
+	}
+}

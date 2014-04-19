@@ -1,0 +1,131 @@
+package com.freja.openglwrapper;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
+import android.opengl.GLES20;
+import android.opengl.GLSurfaceView.Renderer;
+import android.opengl.Matrix;
+
+import com.freja.openglwrapper.renderer.FragmentShader;
+import com.freja.openglwrapper.renderer.Program;
+import com.freja.openglwrapper.renderer.VertexShader;
+
+public class FrejaRenderer implements Renderer {
+	/**
+	 * Vertex & Color Buffer (Ordered: (x, y, z), (r, g, b, a))
+	 */
+	private final FloatBuffer mTriangle1Vertices;
+	//private final FloatBuffer mTriangle2Vertices;
+	//private final FloatBuffer mTriangle3Vertices;
+	
+	/**
+	 * View Matrix
+	 */
+	private float[] mViewMatrix = new float[16];
+	
+	/**
+	 * Projection Matrix
+	 */
+	private float[] mProjectionMatrix = new float[16];
+	
+	/**
+	 * Bytes per float 
+	 */
+	private final int mBytesPerFloat = 4;
+	
+	/**
+	 * Standard Constructor 
+	 */
+	public FrejaRenderer() {
+		final float[] triangle1Vertices = {
+			// x, y, z,
+			// r, g, b, a
+			-.5f, -.25f, .0f,
+			1.0f, 0f, 0f, 1f,
+			
+			.5f, -.25f, 0f,
+			0f, 0f, 1f, 1f,
+			
+			0f, .5f, 0f,
+			0f, 1f, 0f, 1f			
+		};
+		
+		mTriangle1Vertices = ByteBuffer.allocateDirect(triangle1Vertices.length * mBytesPerFloat).order(ByteOrder.nativeOrder()).asFloatBuffer();
+		mTriangle1Vertices.put(triangle1Vertices).position(0);
+		
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+		GLES20.glClearColor(.5f, .5f, .5f, .5f);
+
+		final float [] eye = { 0f, 0f, 1.5f };
+		final float [] look =  { 0f, 0f, -5f };
+		final float [] up = { 0f, 1f, 0f };
+		
+		Matrix.setLookAtM(mViewMatrix, 0, eye[0], eye[1], eye[2], look[0], look[1], look[2], up[0], up[1], up[2]);
+		
+		VertexShader vs = new VertexShader();
+		vs.LoadByString(vertexShader);
+		
+		FragmentShader fs = new FragmentShader();
+		fs.LoadByString(fragmentShader);
+
+		Program p = new Program();
+		p.Compile(vs, fs);
+		p.Use();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onSurfaceChanged(GL10 gl, int width, int height) {
+		GLES20.glViewport(0, 0, width, height);
+		
+		final float ratio = (float)width / (float)height;
+		final float left = - ratio;
+		final float right = ratio;
+		final float bottom = -1f;
+		final float top = 1f;
+		final float near = 1f;
+		final float far = 10f;
+		
+		Matrix.frustumM(mProjectionMatrix, 0, left, right, bottom, top, near, far);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onDrawFrame(GL10 gl) {
+		// TODO Auto-generated method stub
+
+	}
+
+	final String vertexShader = 
+			"uniform mat4 u_MVPMatrix; " + 
+			"attribute vec4 a_Position; " + 
+			"attribute vec4 a_Color; " + 
+			"varying vec4 v_Color; " + 
+			"void main() { " + 
+			"	v_Color = a_Color; " + 
+			"	gl_position = " + 
+			"	u_MVPMatrix * a_Position;" +  
+			"}";
+	
+	final String fragmentShader =
+			"precision mediump float;" +
+			"varying vec4 v_Color" +
+			"void main(); "+
+			"    gl_FragColor = v_Color;" +
+			"}";
+}

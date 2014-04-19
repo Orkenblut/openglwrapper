@@ -1,0 +1,80 @@
+package com.freja.openglwrapper;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
+import android.opengl.GLSurfaceView.Renderer;
+
+public class FrejaRenderer implements Renderer {
+	/**
+	 * Vertex & Color Buffer (Ordered: (x, y, z), (r, g, b, a))
+	 */
+	private final FloatBuffer mTriangle1Vertices;
+	//private final FloatBuffer mTriangle2Vertices;
+	//private final FloatBuffer mTriangle3Vertices;
+	
+	/**
+	 * View Matrix
+	 */
+	private float[] mViewMatrix = new float[16];
+	
+	/**
+	 * Bytes per float 
+	 */
+	private final int mBytesPerFloat = 4;
+	
+	/**
+	 * Standard Constructor 
+	 */
+	public FrejaRenderer() {
+		final float[] triangle1Vertices = {
+			// x, y, z,
+			// r, g, b, a
+			-.5f, -.25f, .0f,
+			1.0f, 0f, 0f, 1f,
+			
+			.5f, -.25f, 0f,
+			0f, 0f, 1f, 1f,
+			
+			0f, .5f, 0f,
+			0f, 1f, 0f, 1f			
+		};
+		
+		mTriangle1Vertices = ByteBuffer.allocateDirect(triangle1Vertices.length * mBytesPerFloat).order(ByteOrder.nativeOrder()).asFloatBuffer();
+		mTriangle1Vertices.put(triangle1Vertices).position(0);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onSurfaceChanged(GL10 gl, int width, int height) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onDrawFrame(GL10 gl) {
+		// TODO Auto-generated method stub
+
+	}
+
+	
+}
+7

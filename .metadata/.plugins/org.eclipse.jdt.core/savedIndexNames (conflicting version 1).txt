@@ -1,0 +1,6 @@
+INDEX VERSION 1.126+/home/orki/WualaDrive/Orki/Projects/AndroidNew/.metadata/.plugins/org.eclipse.jdt.core
+3927879410.index
+1849482205.index
+1270315800.index
+2737322651.index
+3821086555.index

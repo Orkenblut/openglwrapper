@@ -1,0 +1,16 @@
+package com.freja.openglwrapper.renderer;
+
+import android.opengl.GLES20;
+
+public class Program {
+
+	public void Compile(VertexShader vs, FragmentShader fs) throws RuntimeException {
+		int mHandle = GLES20.glCreateProgram();
+		
+		if(mHandle != 0) {
+			GLES20.glAttachShader(mHandle, vs.getHandle());
+			GLES20.glAttachShader(mHandle, fs.getHandle());
+		}
+	}
+
+}
