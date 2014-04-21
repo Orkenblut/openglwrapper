@@ -1,5 +1,6 @@
 package com.freja.openglwrapper.renderer;
 
+import junit.framework.Assert;
 import android.opengl.GLES20;
 
 /**
@@ -8,10 +9,43 @@ import android.opengl.GLES20;
  *
  */
 public class Program {
+	/**
+	 * The linked vertex shader
+	 */
+	private VertexShader mVertexShader;
+	/**
+	 * The linked fragment shader
+	 */
+	private FragmentShader mFragmentShader;	
+	/**
+	 * OpenGL Program handle
+	 */
 	private int mHandle;
+	/**
+	 * Model View Projection Matrix handle
+	 */
 	private int mMVPMatrixHandle;
+	/**
+	 * Position handle
+	 */
 	private int mPositionHandle;
-	private int mColorHandle;
+	/**
+	 * Color handle
+	 */
+	private int mColorHandle;	
+	/**
+	 * Last bound handle to prevent binding the program multiple times
+	 */
+	static private int LastHandle = -1;
+	
+	/**
+	 * Standard constructor - Links both shaders
+	 * @param vs Vertex shader
+	 * @param fs Fragment shader
+	 */
+	public Program(VertexShader vs, FragmentShader fs) {
+		Compile(vs, fs);
+	}
 
 	/**
 	 * Compile Fragment & Vertex Shader into one Program
@@ -19,14 +53,14 @@ public class Program {
 	 * @param fs FragmentShader (Pixelshader)
 	 * @throws RuntimeException
 	 */
-	public void Compile(VertexShader vs, FragmentShader fs) throws RuntimeException {
+	void Compile(VertexShader vs, FragmentShader fs) throws RuntimeException {
 		mHandle = GLES20.glCreateProgram();
 		
 		if(mHandle != 0) {
 			GLES20.glAttachShader(mHandle, vs.getHandle());
 			GLES20.glAttachShader(mHandle, fs.getHandle());
 			
-			GLES20.glBindAttribLocation(mHandle, 0, "a_Position");
+			GLES20.glBindAttribLocation(mHandle, 0, "a_Vertex");
 			GLES20.glBindAttribLocation(mHandle, 1, "a_Color");
 			
 			GLES20.glLinkProgram(mHandle);
@@ -43,6 +77,9 @@ public class Program {
 		if(mHandle == 0) {
 			throw new RuntimeException("Error linking Vertex & Fragmentshader");
 		}
+		
+		mVertexShader = vs;
+		mFragmentShader = fs;
 	}
 
 	/**
@@ -50,10 +87,17 @@ public class Program {
 	 */
 	public void Use() {
 		mMVPMatrixHandle = GLES20.glGetUniformLocation(mHandle, "u_MVPMatrix");
-		mPositionHandle = GLES20.glGetAttribLocation(mHandle, "a_Position");
+		Assert.assertTrue(mMVPMatrixHandle != -1);
+		mPositionHandle = GLES20.glGetAttribLocation(mHandle, "a_Vertex");
+		Assert.assertTrue(mPositionHandle != -1);
 		mColorHandle = GLES20.glGetAttribLocation(mHandle, "a_Color");
+		Assert.assertTrue(mColorHandle != -1);
 		
-		GLES20.glUseProgram(mHandle);
+		// Don't wan't to bind it twice right?
+		if(mHandle != LastHandle) {
+			GLES20.glUseProgram(mHandle);
+			LastHandle = mHandle;
+		}
 	}		
 	
 	/**

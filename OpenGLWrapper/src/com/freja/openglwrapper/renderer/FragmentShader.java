@@ -12,9 +12,25 @@ public class FragmentShader {
 	 * OpenGL Handle for the fragment shader
 	 */
 	private int mHandle;
+	
+	/**
+	 * Initializes basic fragment shader
+	 */
+	public FragmentShader() {
+		LoadByString(baseFragmentShader);
+	}
+	
+	/**
+	 * Load Fragment Shader by string
+	 * @param shader Shader source
+	 */
+	public FragmentShader(final String shader) {
+		LoadByString(shader);
+	}
 
 	/**
 	 * Load Fragment Shader
+	 * @param shader Shader source
 	 * @return Fragment Shader Handle
 	 */
 	public int LoadByString(final String shader) {
@@ -44,4 +60,17 @@ public class FragmentShader {
 	public int getHandle() {		
 		return mHandle;
 	}
+	
+	/**
+	 * Base fragment shader source
+	 */
+	final String baseFragmentShader =
+			"precision mediump float; \n" +
+			"varying vec4 v_Color;\n" +
+
+			"void main(void)\n" +
+			"{\n" +
+			"   //gl_FragColor = v_Color;//vec4( 0.4, 0.0, 0.9, 1.0 );\n" +
+			"   gl_FragColor = vec4( 0.4, 0.0, 0.9, 1.0 );\n" +
+			"}";
 }
